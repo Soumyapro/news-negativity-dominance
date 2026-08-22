@@ -58,22 +58,10 @@ Reporting these as **two separate axes**, rather than merging them into one numb
 - The more analytically interesting region is tone at or above 0 combined with elevated dominance: documents that read as neutral or positive on average but contain a genuine negative spike. This is the hidden negativity phenomenon the metric was designed to surface, and its presence, visible as points scattered above the positive-tone region, including a horizontal band at dominance = 1.0 spanning positive tone values, confirms the metric captures something `overall_tone` alone misses.
 - Two flat horizontal bands appear at the top and bottom of the plot. The bottom band (dominance = 0) holds every document where no sentence was negativity-dominant, regardless of overall tone. The top band (dominance = 1.0) holds documents where at least one sentence, often short and blunt, hit VADER's negativity ceiling; a short headline needs very few negative words to reach this maximum, which is why the band spans a wide range of tone values rather than sitting only on the negative side.
 
-### Constructed test cases
-
-| Case | Sentence 2 | `overall_tone` | `negativity_dominance` |
-|---|---|---|---|
-| Procedural framing | "...forced to lay off a third of its teaching staff." | +0.057 | 0.15 |
-| Emotional framing (same event) | "...outrage and heartbreak after brutal layoffs devastated..." | -0.186 | 0.58 |
-| Hidden negativity | "...tragic warehouse fire killed two workers." (paired with a positive headline) | +0.012 | 0.43 |
-| Contrastive structure | "Despite early fears of disaster, the surgery was a complete success." | +0.117 | 0.00 |
-
-These controlled examples surface two distinct properties of the underlying lexicon, discussed below.
-
 ---
 
 ## Limitations
 
-- **Sensitivity to vocabulary, not event severity.** The same underlying event (staff layoffs) produced a nearly fourfold difference in `negativity_dominance` (0.15 vs. 0.58) depending on whether it was described procedurally or with emotionally charged language. This is inherited directly from VADER, which is tuned on social-media-style text and reacts more strongly to visceral wording than to clinical descriptions of real harm, such as layoffs, displacement, or closures.
 - **Document length assumption.** With most documents limited to two sentences, `negativity_dominance` reduces to "the worse of at most two scores." This is appropriate at this scale but would need to be redesigned for longer, multi-paragraph text, where a single maximum is less informative about whether negativity is sustained or a one-off spike.
 - **Sentence-level scoring, not full-document semantics.** VADER scores sentences independently; it does not track discourse-level context across sentences, such as whether an earlier sentence's negativity is resolved or reversed later in the document.
 - **Contrastive structures are sometimes handled correctly, sometimes not.** In one test, VADER correctly resolved "despite fears of disaster, the surgery was a complete success" as non-negative, avoiding a false positive from the negative-sounding setup clause. This suggests VADER's behavior here is inconsistent rather than uniformly biased, and shouldn't be assumed to generalize without further testing.
